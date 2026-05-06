@@ -13,11 +13,12 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
   // NEW: This acts as a memory-wiper for the drag distance
   const [dragResetKey, setDragResetKey] = useState(0);
 
-  // NEW: When the page (stage) changes, unfreeze and reset the photo automatically!
+
+  // NEW: When the page changes OR she clicks the Dopamine button, unfreeze and reset!
   useEffect(() => {
     setIsPaused(false);
     setDragResetKey(prev => prev + 1);
-  }, [stage]);
+  }, [stage, clickCount]); // 👈 ADDED 'clickCount' HERE!
 
   const basePhoto = "/photo0.jpg";
   const partyPhotos = [
