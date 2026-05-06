@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PartyPopper, Sparkles, Trophy, Heart, Moon, Ghost, Pizza } from "lucide-react";
 import confetti from "canvas-confetti";
 
-// --- THE DYNAMIC BOUNCING LOGO (Fixed Speeds & Screen Bounds) ---
+// --- THE DYNAMIC BOUNCING LOGO (Fixed Speeds & Bounds) ---
 const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number }) => {
   const basePhoto = "/photo0.jpg";
 
@@ -21,7 +21,6 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
       <style jsx>{`
-        /* ADDED SAFETY PADDING: Starts at 15px, stops 190px early so rotating corners never leave the screen! */
         @keyframes moveX {
           0% { transform: translateX(15px); }
           100% { transform: translateX(calc(100vw - 190px)); } 
@@ -32,57 +31,46 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
         }
         
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        /* Reduced Wobble from 20deg to 12deg so it stays tightly inside bounds */
         @keyframes wobble { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } } 
         @keyframes pulsePop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
         @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.1, 0.9); } }
 
-        /* 0: Classic DVD */
         .pattern-0-x { animation: moveX 4.5s linear infinite alternate; }
         .pattern-0-y { animation: moveY 3.2s linear infinite alternate; }
         .pattern-0-img { }
 
-        /* 1: Dizzy Spin (Slightly slower) */
         .pattern-1-x { animation: moveX 3.5s linear infinite alternate; }
         .pattern-1-y { animation: moveY 2.5s linear infinite alternate; }
         .pattern-1-img { animation: spin 4s linear infinite; }
 
-        /* 2: Wavy Breathing */
         .pattern-2-x { animation: moveX 4s ease-in-out infinite alternate; }
         .pattern-2-y { animation: moveY 2.5s ease-in-out infinite alternate; }
         .pattern-2-img { animation: pulsePop 1.5s ease-in-out infinite; }
 
-        /* 3: Glitch */
         .pattern-3-x { animation: moveX 2.5s steps(8) infinite alternate; }
         .pattern-3-y { animation: moveY 2s steps(5) infinite alternate; }
         .pattern-3-img { animation: wobble 0.2s infinite; }
 
-        /* 4: FIXED - Gentle Tumble (Replaced the hyper-fast blur) */
         .pattern-4-x { animation: moveX 2.8s ease-in-out infinite alternate; }
         .pattern-4-y { animation: moveY 2.2s ease-in-out infinite alternate; }
-        .pattern-4-img { animation: spin 5s linear infinite; } /* Very slow, readable spin */
+        .pattern-4-img { animation: spin 5s linear infinite; } 
 
-        /* 5: Drunk Float */
         .pattern-5-x { animation: moveX 6s ease-in infinite alternate; }
         .pattern-5-y { animation: moveY 4.5s ease-out infinite alternate; }
         .pattern-5-img { animation: wobble 3s ease-in-out infinite; }
 
-        /* 6: FIXED - Replaced screen-breaking elastic math with a smooth zigzag */
         .pattern-6-x { animation: moveX 2s ease-out infinite alternate; }
         .pattern-6-y { animation: moveY 3s ease-in infinite alternate; }
         .pattern-6-img { animation: squish 0.8s infinite alternate; }
 
-        /* 7: Robot Teleport */
         .pattern-7-x { animation: moveX 4s steps(3) infinite alternate; }
         .pattern-7-y { animation: moveY 3.2s steps(4) infinite alternate; }
         .pattern-7-img { animation: squish 0.4s steps(2) infinite; }
 
-        /* 8: Bouncy Ball */
         .pattern-8-x { animation: moveX 3s linear infinite alternate; }
         .pattern-8-y { animation: moveY 1.2s cubic-bezier(0.5, 0.05, 1, 0.5) infinite alternate; }
         .pattern-8-img { animation: pulsePop 0.6s infinite alternate; }
 
-        /* 9: Zero Gravity (Slow-Mo) */
         .pattern-9-x { animation: moveX 10s linear infinite alternate; }
         .pattern-9-y { animation: moveY 8s linear infinite alternate; }
         .pattern-9-img { animation: spin 12s linear infinite reverse; }
@@ -104,17 +92,15 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
 
 // --- THE PHOTO EXPLOSION ANIMATION ---
 const PhotoExplosion = () => {
-  // Added photo11.jpg to the explosion!
   const partyPhotos = [
-    "/photo1.jpg", "/photo2.jpg", "/photo3.jpg", "/photo4.jpg", "/photo5.jpg",
-    "/photo6.jpg", "/photo7.jpg", "/photo8.jpg", "/photo9.jpg", "/photo10.jpg",
-    "/photo11.jpg"
+    "/photo2.jpg", "/photo3.jpg", "/photo4.jpg", "/photo5.jpg", "/photo6.jpg",
+    "/photo7.jpg", "/photo8.jpg", "/photo9.jpg", "/photo10.jpg", "/photo11.jpg",
+    "/photo12.jpg"
   ];
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[100] flex items-center justify-center overflow-hidden" aria-hidden="true">
       {partyPhotos.map((src, i) => {
-        // Changed division from 10 to 11 to space out all 11 photos equally in a circle
         const angle = (i / 11) * Math.PI * 2;
         const distance = 150 + Math.random() * 200;
         const tx = Math.cos(angle) * distance;
@@ -145,7 +131,7 @@ const PhotoExplosion = () => {
   );
 };
 
-// --- HIGH-DENSITY SWAYING EMOJIS BACKGROUND ---
+// --- HIGH-DENSITY SWAYING EMOJIS BACKGROUND (UNTOUCHED!) ---
 const FloatingEmojis = () => {
   const emojiSourceList = ["🌸", "✨", "🦋", "💖", "☕", "🐱", "🐈", "🍦", "💫", "😻", "🌈", "🐾"];
   const emojiCount = 45;
@@ -221,6 +207,7 @@ export default function ExamOverParty() {
   const [mounted, setMounted] = useState(false);
   const [clickCount, setClickCount] = useState(0);
   const [showExplosion, setShowExplosion] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -319,14 +306,15 @@ export default function ExamOverParty() {
             <motion.div key="stage1" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} className="space-y-8">
               <div className="text-center space-y-2">
                 <span className="bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-sm font-bold uppercase tracking-widest inline-block mb-2">Dimaag Ka Haal</span>
-                <h2 className="text-3xl font-bold text-slate-800">Sach sach batana, abhi mood kaisa ba?</h2>
+                <h2 className="text-3xl font-bold text-pink-500">So, What's Your Mood Now?</h2>
+
               </div>
 
               <div className="grid grid-cols-1 gap-4">
                 {[
                   { icon: <Moon className="w-5 h-5" />, text: "Deh toot gail ba, agle 72 ghante tak Kumbhkaran mode activated 😴", color: "hover:bg-indigo-50 hover:border-indigo-300" },
-                  { icon: <Ghost className="w-5 h-5" />, text: "Aatma toh paper dekh ke hi nikal gayi thi, ab bas body autopilot pe chal rahi hai 👻", color: "hover:bg-zinc-50 hover:border-zinc-300" },
-                  { icon: <Pizza className="w-5 h-5" />, text: "Dhoop aur syllabus ne dimaag fry kar diya, ab bas AC aur daab ke khana chahiye 🍕🧊", color: "hover:bg-orange-50 hover:border-orange-300" }
+                  { icon: <Ghost className="w-5 h-5" />, text: "bache hue din bas scrolling and movies aur bahar khi ghumne ka plan hai 👻", color: "hover:bg-zinc-50 hover:border-zinc-300" },
+                  { icon: <Pizza className="w-5 h-5" />, text: "Dhoop aur syllabus ne dimaag fry kar diya, ab bas motihaari wapas jana hai 🍕🧊", color: "hover:bg-orange-50 hover:border-orange-300" }
                 ].map((item, idx) => (
                   <motion.button
                     key={idx}
@@ -361,7 +349,7 @@ export default function ExamOverParty() {
                   <Trophy className="w-14 h-14 text-yellow-500" />
                 </motion.div>
 
-                <h2 className="text-3xl font-bold text-slate-800">Certified Semester Survivor 🏆</h2>
+                <h2 className="text-3xl font-bold text-slate-800">Officially the Cutest Survivor 🎀✨</h2>
 
                 <div className="bg-pink-50 p-6 rounded-2xl border border-pink-100 space-y-3 text-left">
                   <p className="text-slate-600 font-medium leading-relaxed">
@@ -373,15 +361,89 @@ export default function ExamOverParty() {
                 </div>
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleDopamineClick}
-                className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2 relative overflow-hidden"
-              >
-                <Heart className="w-5 h-5 fill-white" />
-                Dopamine Button (Daba ke dekho!) 🎊
-              </motion.button>
+              {/* Wrapper for buttons with conditional rendering */}
+              <div className="space-y-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDopamineClick}
+                  className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2 relative overflow-hidden"
+                >
+                  <Heart className="w-5 h-5 fill-white" />
+                  {/* REQUIREMENT: Text changes based on clickCount */}
+                  {clickCount === 0 ? "click here 😉" : "click again 😉"}
+                </motion.button>
+
+                {/* REQUIREMENT: High-Five button only appears after 5 clicks */}
+                {/* REQUIREMENT: High-Five button changes into a fun menu! */}
+                <AnimatePresence mode="wait">
+                  {/* Shows the initial "Send Aditya something..." button after 5 clicks */}
+                  {clickCount >= 5 && !showOptions && (
+                    <motion.button
+                      key="reveal-button"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      onClick={() => setShowOptions(true)}
+                      className="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex justify-center items-center gap-2"
+                    >
+                      <span className="text-xl">💌</span>
+                      Send Aditya something...
+                    </motion.button>
+                  )}
+
+                  {/* The Menu that pops up when she clicks the button above */}
+                  {showOptions && (
+                    <motion.div
+                      key="options-menu"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-3 w-full pt-2"
+                    >
+                      <motion.a
+                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
+                        href="https://wa.me/917857825881?text=heyy,%20I%20liked%20your%20website%20%F0%9F%99%8C%F0%9F%8F%BB"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
+                      >
+                        Send High-Five 🙌
+                        <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
+                      </motion.a>
+
+                      <motion.a
+                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
+                        href="https://wa.me/917857825881?text=Heyy!%20Website%20is%20cute%20but%20some%20of%20those%20photos%20are%20so%20embarrassing!%20%F0%9F%98%82%F0%9F%98%AD"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-amber-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
+                      >
+                        Complain about the photos 😂
+                        <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
+                      </motion.a>
+
+                      <motion.a
+                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
+                        href="https://wa.me/917857825881"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full bg-purple-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
+                      >
+                        Write your own message ✍️
+                        <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
+                      </motion.a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
             </motion.div>
           )}
 
