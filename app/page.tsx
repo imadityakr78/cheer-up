@@ -93,9 +93,9 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
 // --- THE PHOTO EXPLOSION ANIMATION ---
 const PhotoExplosion = () => {
   const partyPhotos = [
-    "/photo2.jpg", "/photo3.jpg", "/photo4.jpg", "/photo5.jpg", "/photo6.jpg",
-    "/photo7.jpg", "/photo8.jpg", "/photo9.jpg", "/photo10.jpg", "/photo11.jpg",
-    "/photo12.jpg"
+    "/photo1.jpg", "/photo2.jpg", "/photo3.jpg", "/photo4.jpg", "/photo5.jpg",
+    "/photo6.jpg", "/photo7.jpg", "/photo8.jpg", "/photo9.jpg", "/photo10.jpg",
+    "/photo11.jpg"
   ];
 
   return (
@@ -264,23 +264,27 @@ export default function ExamOverParty() {
     });
   };
   // This intercepts the click, pings your backend, and opens WhatsApp
+  // This intercepts the click, pings your backend, and opens WhatsApp
   const handleOptionClick = async (optionName: string, whatsappUrl: string) => {
     try {
+      console.log(`Sending ${optionName} to backend...`); // Adds a log to your browser console
+
       // 1. Ping your backend silently
-      // You will need to create this API route in your app/api folder later!
       await fetch('/api/track-click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           clickedBy: "Samridhi",
+          action: "WhatsApp Choice", // 👈 THIS WAS MISSING!
           optionSelected: optionName,
           timestamp: new Date().toISOString()
         })
       });
+
     } catch (error) {
       console.error("Backend tracking failed, but we still open WhatsApp!", error);
     } finally {
-      // 2. Open WhatsApp regardless of whether the backend ping succeeded or failed
+      // 2. Open WhatsApp after the backend ping finishes
       window.open(whatsappUrl, '_blank');
     }
   };
