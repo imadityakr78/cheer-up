@@ -403,7 +403,7 @@ export default function ExamOverParty() {
                     >
                       <motion.a
                         // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
-                        href="https://wa.me/917857825881?text=heyy,%20I%20liked%20your%20website%20%F0%9F%99%8C%F0%9F%8F%BB"
+                        href="https://wa.me/917857825881?text=heyy Aditya,%20I%20liked%20your%20website%20%F0%9F%99%8C%F0%9F%8F%BB"
                         target="_blank"
                         rel="noopener noreferrer"
                         whileHover={{ scale: 1.02 }}
