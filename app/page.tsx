@@ -81,7 +81,7 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
           .pattern-9-img { animation: spin 12s linear infinite reverse; }
         `}</style>
 
-        {/* The X & Y containers now pause when 'isPaused' is true */}
+
         <div
           className={`absolute pattern-${patternIndex}-x`}
           style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
@@ -90,15 +90,15 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
             className={`w-[160px] h-[160px] drop-shadow-2xl pattern-${patternIndex}-y`}
             style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
           >
-            {/* THIS IS THE DRAGGABLE WRAPPER */}
+
             <motion.div
               drag
               dragMomentum={false}
               dragSnapToOrigin={true}
 
-              // Stops it from sliding away after she lets go
-              onDragStart={() => setIsPaused(true)} // Freezes the chaotic animation!
-              onDragEnd={() => setIsPaused(false)}
+
+              onDragStart={() => setIsPaused(true)}
+
               className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -108,8 +108,8 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
                 src={currentPhoto}
                 alt="Her Face"
                 onClick={() => {
-                  setIsExpanded(true); // Opens the lightbox
-                  setIsPaused(true);   // Freezes the animation if she clicks it mid-air
+                  setIsExpanded(true);
+                  setIsPaused(true);
                 }}
                 className={`w-full h-full object-cover rounded-full border-[5px] border-white shadow-xl pattern-${patternIndex}-img`}
                 style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
