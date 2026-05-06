@@ -5,11 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PartyPopper, Sparkles, Trophy, Heart, Moon, Ghost, Pizza } from "lucide-react";
 import confetti from "canvas-confetti";
 
-// --- THE DYNAMIC BOUNCING LOGO (Now Draggable & Clickable!) ---
+
 const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number }) => {
-  // New states to control the drag freezing and the popup lightbox
   const [isPaused, setIsPaused] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // NEW: This acts as a memory-wiper for the drag distance
+  const [dragResetKey, setDragResetKey] = useState(0);
+
+  // NEW: When the page (stage) changes, unfreeze and reset the photo automatically!
+  useEffect(() => {
+    setIsPaused(false);
+    setDragResetKey(prev => prev + 1);
+  }, [stage]);
 
   const basePhoto = "/photo0.jpg";
   const partyPhotos = [
@@ -81,7 +89,6 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
           .pattern-9-img { animation: spin 12s linear infinite reverse; }
         `}</style>
 
-
         <div
           className={`absolute pattern-${patternIndex}-x`}
           style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
@@ -90,13 +97,13 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
             className={`w-[160px] h-[160px] drop-shadow-2xl pattern-${patternIndex}-y`}
             style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
           >
-
+            {/* THIS IS THE DRAGGABLE WRAPPER */}
             <motion.div
+              key={dragResetKey} // 👈 THIS WIPES THE DRAG MEMORY SO IT DOESN'T FLY OFF SCREEN
               drag
               dragMomentum={false}
-
               onDragStart={() => setIsPaused(true)}
-
+              // We leave off onDragEnd so it stays frozen where she drops it!
               className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -127,6 +134,7 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
             onClick={() => {
               setIsExpanded(false);
               setIsPaused(false);
+              setDragResetKey(prev => prev + 1); // 👈 WIPES MEMORY WHEN POPUP CLOSES
             }}
             className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md cursor-zoom-out p-6 pointer-events-auto"
           >
