@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PartyPopper, Sparkles, Trophy, Heart, Moon, Ghost, Pizza } from "lucide-react";
 import confetti from "canvas-confetti";
 
-// --- THE DYNAMIC BOUNCING LOGO (Fixed Speeds & Bounds) ---
+// --- THE DYNAMIC BOUNCING LOGO (Now Draggable & Clickable!) ---
 const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number }) => {
-  const basePhoto = "/photo0.jpg";
+  // New states to control the drag freezing and the popup lightbox
+  const [isPaused, setIsPaused] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
+  const basePhoto = "/photo0.jpg";
   const partyPhotos = [
     "/photo1.jpg", "/photo2.jpg", "/photo3.jpg", "/photo4.jpg", "/photo5.jpg",
     "/photo6.jpg", "/photo7.jpg", "/photo8.jpg", "/photo9.jpg", "/photo10.jpg",
@@ -19,74 +22,130 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
   const patternIndex = stage < 2 ? 0 : clickCount % 10;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
-      <style jsx>{`
-        @keyframes moveX {
-          0% { transform: translateX(15px); }
-          100% { transform: translateX(calc(100vw - 190px)); } 
-        }
-        @keyframes moveY {
-          0% { transform: translateY(15px); }
-          100% { transform: translateY(calc(100vh - 190px)); } 
-        }
-        
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes wobble { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } } 
-        @keyframes pulsePop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-        @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.1, 0.9); } }
+    <>
+      {/* 1. The Bouncing Image */}
+      <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
+        <style jsx>{`
+          @keyframes moveX {
+            0% { transform: translateX(15px); }
+            100% { transform: translateX(calc(100vw - 190px)); } 
+          }
+          @keyframes moveY {
+            0% { transform: translateY(15px); }
+            100% { transform: translateY(calc(100vh - 190px)); } 
+          }
+          
+          @keyframes spin { 100% { transform: rotate(360deg); } }
+          @keyframes wobble { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } } 
+          @keyframes pulsePop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+          @keyframes squish { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.1, 0.9); } }
 
-        .pattern-0-x { animation: moveX 4.5s linear infinite alternate; }
-        .pattern-0-y { animation: moveY 3.2s linear infinite alternate; }
-        .pattern-0-img { }
+          .pattern-0-x { animation: moveX 4.5s linear infinite alternate; }
+          .pattern-0-y { animation: moveY 3.2s linear infinite alternate; }
+          .pattern-0-img { }
 
-        .pattern-1-x { animation: moveX 3.5s linear infinite alternate; }
-        .pattern-1-y { animation: moveY 2.5s linear infinite alternate; }
-        .pattern-1-img { animation: spin 4s linear infinite; }
+          .pattern-1-x { animation: moveX 3.5s linear infinite alternate; }
+          .pattern-1-y { animation: moveY 2.5s linear infinite alternate; }
+          .pattern-1-img { animation: spin 4s linear infinite; }
 
-        .pattern-2-x { animation: moveX 4s ease-in-out infinite alternate; }
-        .pattern-2-y { animation: moveY 2.5s ease-in-out infinite alternate; }
-        .pattern-2-img { animation: pulsePop 1.5s ease-in-out infinite; }
+          .pattern-2-x { animation: moveX 4s ease-in-out infinite alternate; }
+          .pattern-2-y { animation: moveY 2.5s ease-in-out infinite alternate; }
+          .pattern-2-img { animation: pulsePop 1.5s ease-in-out infinite; }
 
-        .pattern-3-x { animation: moveX 2.5s steps(8) infinite alternate; }
-        .pattern-3-y { animation: moveY 2s steps(5) infinite alternate; }
-        .pattern-3-img { animation: wobble 0.2s infinite; }
+          .pattern-3-x { animation: moveX 2.5s steps(8) infinite alternate; }
+          .pattern-3-y { animation: moveY 2s steps(5) infinite alternate; }
+          .pattern-3-img { animation: wobble 0.2s infinite; }
 
-        .pattern-4-x { animation: moveX 2.8s ease-in-out infinite alternate; }
-        .pattern-4-y { animation: moveY 2.2s ease-in-out infinite alternate; }
-        .pattern-4-img { animation: spin 5s linear infinite; } 
+          .pattern-4-x { animation: moveX 2.8s ease-in-out infinite alternate; }
+          .pattern-4-y { animation: moveY 2.2s ease-in-out infinite alternate; }
+          .pattern-4-img { animation: spin 5s linear infinite; } 
 
-        .pattern-5-x { animation: moveX 6s ease-in infinite alternate; }
-        .pattern-5-y { animation: moveY 4.5s ease-out infinite alternate; }
-        .pattern-5-img { animation: wobble 3s ease-in-out infinite; }
+          .pattern-5-x { animation: moveX 6s ease-in infinite alternate; }
+          .pattern-5-y { animation: moveY 4.5s ease-out infinite alternate; }
+          .pattern-5-img { animation: wobble 3s ease-in-out infinite; }
 
-        .pattern-6-x { animation: moveX 2s ease-out infinite alternate; }
-        .pattern-6-y { animation: moveY 3s ease-in infinite alternate; }
-        .pattern-6-img { animation: squish 0.8s infinite alternate; }
+          .pattern-6-x { animation: moveX 2s ease-out infinite alternate; }
+          .pattern-6-y { animation: moveY 3s ease-in infinite alternate; }
+          .pattern-6-img { animation: squish 0.8s infinite alternate; }
 
-        .pattern-7-x { animation: moveX 4s steps(3) infinite alternate; }
-        .pattern-7-y { animation: moveY 3.2s steps(4) infinite alternate; }
-        .pattern-7-img { animation: squish 0.4s steps(2) infinite; }
+          .pattern-7-x { animation: moveX 4s steps(3) infinite alternate; }
+          .pattern-7-y { animation: moveY 3.2s steps(4) infinite alternate; }
+          .pattern-7-img { animation: squish 0.4s steps(2) infinite; }
 
-        .pattern-8-x { animation: moveX 3s linear infinite alternate; }
-        .pattern-8-y { animation: moveY 1.2s cubic-bezier(0.5, 0.05, 1, 0.5) infinite alternate; }
-        .pattern-8-img { animation: pulsePop 0.6s infinite alternate; }
+          .pattern-8-x { animation: moveX 3s linear infinite alternate; }
+          .pattern-8-y { animation: moveY 1.2s cubic-bezier(0.5, 0.05, 1, 0.5) infinite alternate; }
+          .pattern-8-img { animation: pulsePop 0.6s infinite alternate; }
 
-        .pattern-9-x { animation: moveX 10s linear infinite alternate; }
-        .pattern-9-y { animation: moveY 8s linear infinite alternate; }
-        .pattern-9-img { animation: spin 12s linear infinite reverse; }
-      `}</style>
+          .pattern-9-x { animation: moveX 10s linear infinite alternate; }
+          .pattern-9-y { animation: moveY 8s linear infinite alternate; }
+          .pattern-9-img { animation: spin 12s linear infinite reverse; }
+        `}</style>
 
-      <div className={`absolute pattern-${patternIndex}-x`}>
-        <div className={`w-[160px] h-[160px] drop-shadow-2xl pattern-${patternIndex}-y`}>
-          <img
-            key={currentPhoto}
-            src={currentPhoto}
-            alt="Her Face"
-            className={`w-full h-full object-cover rounded-full border-[5px] border-white shadow-xl pattern-${patternIndex}-img`}
-          />
+        {/* The X & Y containers now pause when 'isPaused' is true */}
+        <div
+          className={`absolute pattern-${patternIndex}-x`}
+          style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+        >
+          <div
+            className={`w-[160px] h-[160px] drop-shadow-2xl pattern-${patternIndex}-y`}
+            style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+          >
+            {/* THIS IS THE DRAGGABLE WRAPPER */}
+            <motion.div
+              drag
+              dragMomentum={false}
+
+              // Stops it from sliding away after she lets go
+              onDragStart={() => setIsPaused(true)} // Freezes the chaotic animation!
+              onDragEnd={() => setIsPaused(false)}
+              className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <img
+                key={currentPhoto}
+                src={currentPhoto}
+                alt="Her Face"
+                onClick={() => {
+                  setIsExpanded(true); // Opens the lightbox
+                  setIsPaused(true);   // Freezes the animation if she clicks it mid-air
+                }}
+                className={`w-full h-full object-cover rounded-full border-[5px] border-white shadow-xl pattern-${patternIndex}-img`}
+                style={{ animationPlayState: isPaused ? 'paused' : 'running' }}
+              />
+            </motion.div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* 2. THE EXPANDED LIGHTBOX POPUP */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => {
+              setIsExpanded(false);
+              setIsPaused(false);
+            }}
+            className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-black/80 backdrop-blur-md cursor-zoom-out p-6 pointer-events-auto"
+          >
+            <motion.img
+              initial={{ scale: 0.5, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ type: "spring", bounce: 0.4 }}
+              src={currentPhoto}
+              className="w-auto h-auto max-w-full max-h-[75vh] object-contain rounded-[2rem] border-[8px] border-white shadow-2xl"
+            />
+            <p className="mt-8 text-white/60 font-medium tracking-widest uppercase text-sm animate-pulse">
+              Tap anywhere to close
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
