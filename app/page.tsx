@@ -212,6 +212,21 @@ export default function ExamOverParty() {
   useEffect(() => {
     setMounted(true);
     fireConfetti();
+
+    // --- NEW PRELOADER CODE ---
+    // This secretly downloads all photos in the background as soon as she opens the link!
+    const photosToPreload = [
+      "/photo0.jpg", "/photo1.jpg", "/photo2.jpg", "/photo3.jpg", "/photo4.jpg",
+      "/photo5.jpg", "/photo6.jpg", "/photo7.jpg", "/photo8.jpg", "/photo9.jpg",
+      "/photo10.jpg", "/photo11.jpg"
+    ];
+
+    photosToPreload.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+    // --------------------------
+
   }, []);
 
   const fireConfetti = () => {
