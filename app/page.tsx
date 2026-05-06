@@ -94,10 +94,8 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
             <motion.div
               drag
               dragMomentum={false}
-              dragSnapToOrigin={true}
 
-
-
+              onDragStart={() => setIsPaused(true)}
 
               className="w-full h-full pointer-events-auto cursor-grab active:cursor-grabbing"
               whileHover={{ scale: 1.05 }}
