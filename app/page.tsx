@@ -263,6 +263,45 @@ export default function ExamOverParty() {
       colors: ['#f43f5e', '#ec4899', '#d946ef', '#fbbf24']
     });
   };
+  // This intercepts the click, pings your backend, and opens WhatsApp
+  const handleOptionClick = async (optionName: string, whatsappUrl: string) => {
+    try {
+      // 1. Ping your backend silently
+      // You will need to create this API route in your app/api folder later!
+      await fetch('/api/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clickedBy: "Samridhi",
+          optionSelected: optionName,
+          timestamp: new Date().toISOString()
+        })
+      });
+    } catch (error) {
+      console.error("Backend tracking failed, but we still open WhatsApp!", error);
+    } finally {
+      // 2. Open WhatsApp regardless of whether the backend ping succeeded or failed
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+  // This silently pings your backend when she selects her mood on Page 2
+  const trackMoodSelection = async (moodText: string) => {
+    try {
+      await fetch('/api/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clickedBy: "Samridhi",
+          action: "Mood Selected",
+          optionSelected: moodText,
+          timestamp: new Date().toISOString()
+        })
+      });
+    } catch (error) {
+      console.error("Backend tracking failed for mood selection", error);
+    }
+  };
+
 
   const handleDopamineClick = () => {
     setClickCount((prev) => prev + 1);
@@ -336,6 +375,7 @@ export default function ExamOverParty() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
+                      trackMoodSelection(item.text);
                       setStage(2);
                       setShowExplosion(true);
                       dopamineBlast();
@@ -416,44 +456,44 @@ export default function ExamOverParty() {
                       animate={{ opacity: 1, y: 0 }}
                       className="space-y-3 w-full pt-2"
                     >
-                      <motion.a
-                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
-                        href="https://wa.me/917857825881?text=heyy Aditya,%20I%20liked%20your%20website%20%F0%9F%99%8C%F0%9F%8F%BB"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <motion.button
+                        onClick={() => handleOptionClick(
+                          "High-Five",
+                          "https://wa.me/917857825881?text=heyy,%20I%20liked%20your%20website%20%F0%9F%99%8C%F0%9F%8F%BB"
+                        )}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
                       >
                         Send High-Five 🙌
                         <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
-                      </motion.a>
+                      </motion.button>
 
-                      <motion.a
-                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
-                        href="https://wa.me/917857825881?text=Heyy!%20Website%20is%20cute%20but%20some%20of%20those%20photos%20are%20so%20embarrassing!%20%F0%9F%98%82%F0%9F%98%AD"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <motion.button
+                        onClick={() => handleOptionClick(
+                          "Complain about photos",
+                          "https://wa.me/917857825881?text=Heyy!%20Website%20is%20cute%20but%20some%20of%20those%20photos%20are%20so%20embarrassing!%20%F0%9F%98%82%F0%9F%98%AD"
+                        )}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full bg-amber-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
                       >
                         Complain about the photos 😂
                         <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
-                      </motion.a>
+                      </motion.button>
 
-                      <motion.a
-                        // ⚠️ REPLACE 91XXXXXXXXXX WITH YOUR NUMBER
-                        href="https://wa.me/917857825881"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <motion.button
+                        onClick={() => handleOptionClick(
+                          "Custom Message",
+                          "https://wa.me/917857825881"
+                        )}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         className="w-full bg-purple-500 text-white font-bold py-3 px-4 rounded-xl shadow-md flex justify-between items-center"
                       >
                         Write your own message ✍️
                         <span className="text-sm bg-black/10 px-2 py-1 rounded-lg">Send ↗</span>
-                      </motion.a>
+                      </motion.button>
                     </motion.div>
                   )}
                 </AnimatePresence>
