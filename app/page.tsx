@@ -94,6 +94,7 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
             <motion.div
               drag
               dragMomentum={false}
+              dragSnapToOrigin={true}
 
               // Stops it from sliding away after she lets go
               onDragStart={() => setIsPaused(true)} // Freezes the chaotic animation!
