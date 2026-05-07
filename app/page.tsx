@@ -14,11 +14,16 @@ const BouncingLogo = ({ clickCount, stage }: { clickCount: number, stage: number
   const [dragResetKey, setDragResetKey] = useState(0);
 
 
-  // NEW: When the page changes OR she clicks the Dopamine button, unfreeze and reset!
   useEffect(() => {
     setIsPaused(false);
     setDragResetKey(prev => prev + 1);
-  }, [stage, clickCount]); // 👈 ADDED 'clickCount' HERE!
+  }, [stage]);
+
+  // 2. When the DOPAMINE BUTTON is clicked: ONLY unpause! 
+  // (We don't wipe the memory here, which stops the lag spike so the confetti can explode!)
+  useEffect(() => {
+    setIsPaused(false);
+  }, [clickCount]);
 
   const basePhoto = "/photo0.jpg";
   const partyPhotos = [
@@ -504,7 +509,7 @@ export default function ExamOverParty() {
                 {/* REQUIREMENT: High-Five button changes into a fun menu! */}
                 <AnimatePresence mode="wait">
                   {/* Shows the initial "Send Aditya something..." button after 5 clicks */}
-                  {clickCount >= 5 && !showOptions && (
+                  {clickCount >= 4 && !showOptions && (
                     <motion.button
                       key="reveal-button"
                       initial={{ opacity: 0, y: 20 }}
